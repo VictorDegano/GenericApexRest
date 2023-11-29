@@ -1,5 +1,6 @@
 @IsTest
 private class RESTGenericTest{
+
     @IsTest
     private static void get_withPathParametersAtEnd(){
         //Setup(Given)

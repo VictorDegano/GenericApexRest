@@ -101,13 +101,25 @@ global with sharing class RESTGeneric{
     private static void setUnkownResource(){
         RestResponse response = RestContext.response;
         response.statuscode = 404;
-        response.responseBody = Blob.valueOf('Unknown Resource.');
+
+        JSONResponse responseBody = new JSONResponse();
+        responseBody.hasError = true;
+        responseBody.internalCode = GenericRestStatusCode.UNKNOWN_RESOURCE.CODE;
+        responseBody.message = GenericRestStatusCode.UNKNOWN_RESOURCE.DESCRIPTION;
+
+        response.responseBody = responseBody.toBlob();
     }
 
     private static void setServerError(){
         RestResponse response = RestContext.response;
         response.statuscode = 500;
-        response.responseBody = Blob.valueOf('Internal Server Error.');
+
+        JSONResponse responseBody = new JSONResponse();
+        responseBody.hasError = true;
+        responseBody.internalCode = GenericRestStatusCode.INTERNAL_ERROR.CODE;
+        responseBody.message = GenericRestStatusCode.INTERNAL_ERROR.DESCRIPTION;
+
+        response.responseBody = responseBody.toBlob();
     }
 
 }
