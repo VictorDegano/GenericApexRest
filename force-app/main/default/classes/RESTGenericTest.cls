@@ -21,8 +21,9 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
+        JSONResponse jsonResponse = getRESTresponse();
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected status of the Get resource');
-        Assert.areEqual('paramAtEnd', response.responseBody.toString(), 'It\'s not the expected response of the Get resource');
+        Assert.areEqual('paramAtEnd', jsonResponse.data, 'It\'s not the expected response of the Get resource');
     }
 
     @IsTest
@@ -94,7 +95,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('Internal Server Error.', response.responseBody.toString(), 'It\'s not the expected status for a exception');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('Internal Server Error.', jsonResponse.message, 'It\'s not the expected status for a exception');
         Assert.areEqual(500, response.statusCode, 'It\'s not the expected response for a exception');
     }
 
@@ -118,7 +120,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('Unknown Resource.', response.responseBody.toString(), 'It\'s not the expected status for a missconfigured resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('Unknown Resource.', jsonResponse.message, 'It\'s not the expected status for a missconfigured resource');
         Assert.areEqual(404, response.statusCode, 'It\'s not the expected response for a missconfigured resource');
     }
 
@@ -240,6 +243,18 @@ private class RESTGenericTest{
         //Test(Then)
         Assert.areEqual('true', response.responseBody.toString(), 'It\'s not the expected status of the Get resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the Get resource');
+    }
+
+    private static JSONResponse getRESTresponse() {
+		Map<String, Object> responseUntyped = (Map<String, Object>) JSON.deserializeUntyped(RestContext.response.responseBody.toString());
+
+        JSONResponse jsonResponse = new JSONResponse();
+
+        jsonResponse.hasError = (Boolean) responseUntyped.get('hasError');
+        jsonResponse.internalCode = (Integer) responseUntyped.get('internalCode');
+        jsonResponse.message = (String) responseUntyped.get('message');
+        jsonResponse.data = (object) responseUntyped.get('data');
+        return jsonResponse;
     }
 
     private static List<Generic_REST_Route__mdt> getMetadata(){
