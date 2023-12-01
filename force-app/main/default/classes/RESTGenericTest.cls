@@ -47,7 +47,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('131', response.responseBody.toString(), 'It\'s not the expected response of the Get resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('131', jsonResponse.data, 'It\'s not the expected response of the Get resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected status of the Get resource');
     }
 
@@ -71,8 +72,9 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
+        JSONResponse jsonResponse = getRESTresponse();
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected status of the Get resource');
-        Assert.areEqual('firstTest', response.responseBody.toString(), 'It\'s not the expected response of the Get resource');
+        Assert.areEqual('firstTest', jsonResponse.data, 'It\'s not the expected response of the Get resource');
     }
 
     @IsTest
@@ -145,7 +147,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('true', response.responseBody.toString(), 'It\'s not the expected status of the PATCH resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('true', jsonResponse.data, 'It\'s not the expected status of the PATCH resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the PATCH resource');
     }
 
@@ -169,7 +172,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('true', response.responseBody.toString(), 'It\'s not the expected status of the DELETE resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('true', jsonResponse.data, 'It\'s not the expected status of the DELETE resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the DELETE resource');
     }
 
@@ -193,7 +197,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('true', response.responseBody.toString(), 'It\'s not the expected status of the PUT resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('true', jsonResponse.data, 'It\'s not the expected status of the PUT resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the PUT resource');
     }
 
@@ -217,7 +222,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('true', response.responseBody.toString(), 'It\'s not the expected status of the POST resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('true', jsonResponse.data, 'It\'s not the expected status of the POST resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the POST resource');
     }
 
@@ -241,7 +247,8 @@ private class RESTGenericTest{
         Test.stopTest();
 
         //Test(Then)
-        Assert.areEqual('true', response.responseBody.toString(), 'It\'s not the expected status of the Get resource');
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual('true', jsonResponse.data, 'It\'s not the expected status of the Get resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the Get resource');
     }
 
