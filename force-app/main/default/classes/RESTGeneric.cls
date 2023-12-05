@@ -1,5 +1,12 @@
 @RestResource(urlMapping = '/*')
 global with sharing class RESTGeneric{
+
+    public static final String METHOD = 'METHOD';
+    public static final String PARAMS_IN_PATH = 'PARAMS_IN_PATH';
+    public static final String PATH_PARAMETERS = 'PATH_PARAMETERS';
+    public static final String HAS_BODY = 'HAS_BODY';
+    public static final String REQUEST_BODY = 'REQUEST_BODY';
+
     @TestVisible
     private static List<Generic_REST_Route__mdt> route_Configs = Generic_REST_Route__mdt.getAll().values();
     @HttpGet
@@ -38,6 +45,8 @@ global with sharing class RESTGeneric{
 
             executeSpecificREST((Generic_REST_Route__mdt) route.get());
 
+        } catch (JSONException  aJsonProcessException) {
+            setBadRequest(GenericRestStatusCode.BAD_JSON_FORMAT_REQUEST);
         } catch (Exception processException){
             setServerError();
         }
@@ -48,15 +57,31 @@ global with sharing class RESTGeneric{
 
         InterfaceRESTGeneric specificClass = (InterfaceRESTGeneric)classType.newInstance();
 
-        Map<String, Object> parameters = new Map<String, Object>{ 'METHOD' => route.Method__c, 'PARAMS_IN_PATH' => false };
+        Map<String, Object> parameters = new Map<String, Object>{ METHOD => route.Method__c, PARAMS_IN_PATH => false };
         Boolean isParamsInPath = route.Path__c.contains('*');
 
         if (isParamsInPath){
-            parameters.put('PARAMS_IN_PATH', isParamsInPath);
-            parameters.put('PATH_PARAMETERS', loadPathParameters(route.Path__c));
+            parameters.put(PARAMS_IN_PATH, isParamsInPath);
+            parameters.put(PATH_PARAMETERS, loadPathParameters(route.Path__c));
+        }
+
+        if(RestContext.request.requestBody != null){
+            parameters.put(HAS_BODY, true);
+            parameters.put(REQUEST_BODY, getJsonRequest());
         }
 
         specificClass.execute(parameters);
+    }
+
+    private static JSONRequest getJsonRequest(){
+        JSONRequest requestBody;
+        try {
+            requestBody = JSONRequest.deserializeFromBlob(RestContext.request.requestBody);
+        } catch ( Exception conversionExeption ) {
+            throw new JSONException(conversionExeption.getMessage());
+        }
+
+        return requestBody;
     }
 
     private static List<String> loadPathParameters(String path){
@@ -98,26 +123,26 @@ global with sharing class RESTGeneric{
         return config;
     }
 
+    private static void setBadRequest(GenericRestStatusCode.RESTInternalCode restStatusCode){
+        setResponse(400, restStatusCode);
+    }
+
     private static void setUnkownResource(){
-        RestResponse response = RestContext.response;
-        response.statuscode = 404;
-
-        JSONResponse responseBody = new JSONResponse();
-        responseBody.hasError = true;
-        responseBody.internalCode = GenericRestStatusCode.UNKNOWN_RESOURCE.CODE;
-        responseBody.message = GenericRestStatusCode.UNKNOWN_RESOURCE.DESCRIPTION;
-
-        response.responseBody = responseBody.toBlob();
+        setResponse(404, GenericRestStatusCode.UNKNOWN_RESOURCE);
     }
 
     private static void setServerError(){
+        setResponse(500, GenericRestStatusCode.INTERNAL_ERROR);
+    }
+
+    private static void setResponse(Integer responseStatusCode, GenericRestStatusCode.RESTInternalCode restStatusCode){
         RestResponse response = RestContext.response;
-        response.statuscode = 500;
+        response.statuscode = responseStatusCode;
 
         JSONResponse responseBody = new JSONResponse();
-        responseBody.hasError = true;
-        responseBody.internalCode = GenericRestStatusCode.INTERNAL_ERROR.CODE;
-        responseBody.message = GenericRestStatusCode.INTERNAL_ERROR.DESCRIPTION;
+        responseBody.hasError = responseStatusCode >= 400;
+        responseBody.internalCode = restStatusCode.CODE;
+        responseBody.message = restStatusCode.DESCRIPTION;
 
         response.responseBody = responseBody.toBlob();
     }
