@@ -1,5 +1,12 @@
 @IsTest
 private class RESTGenericTest{
+
+    @TestSetup
+    static void makeData(){
+        REST_Access__c orgAccess = new REST_Access__c( Test__c = true );
+        insert orgAccess;
+    }
+
     @IsTest
     private static void patch_withBody(){
         //Setup(Given)
@@ -451,6 +458,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/test/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "test method"' + 
             '},' + 
             '{' + 
@@ -467,6 +475,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/exception/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "Exception method"' + 
             '},' + 
             '{' + 
@@ -483,6 +492,7 @@ private class RESTGenericTest{
             '"http_method__c": "POST",' + 
             '"path__c": "/post/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "post method"' + 
             '},' + 
             '{' + 
@@ -499,6 +509,7 @@ private class RESTGenericTest{
             '"http_method__c": "PUT",' + 
             '"path__c": "/put/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "put method"' + 
             '},' + 
             '{' + 
@@ -515,6 +526,7 @@ private class RESTGenericTest{
             '"http_method__c": "PATCH",' + 
             '"path__c": "/patch/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "patch method"' + 
             '},' + 
             '{' + 
@@ -531,6 +543,7 @@ private class RESTGenericTest{
             '"http_method__c": "DELETE",' + 
             '"path__c": "/delete/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "delete method"' + 
             '},' + 
             '{' + 
@@ -547,6 +560,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/test/*/withpathparameters/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "test with params method"' + 
             '},' + 
             '{' + 
@@ -563,6 +577,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/test/withquery/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "test with query method"' + 
             '},' + 
             '{' + 
@@ -579,6 +594,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/withpathparameters/*",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "test with params method"' + 
             '},' + 
             '{' + 
@@ -595,6 +611,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/testWithBody/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "WithBody"' + 
             '},' + 
             '{' + 
@@ -611,6 +628,7 @@ private class RESTGenericTest{
             '"http_method__c": "POST",' + 
             '"path__c": "/postWithBody/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "WithBody"' + 
             '},' + 
             '{' + 
@@ -627,6 +645,7 @@ private class RESTGenericTest{
             '"http_method__c": "PUT",' + 
             '"path__c": "/putWithBody/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "WithBody"' + 
             '},' + 
             '{' + 
@@ -643,6 +662,7 @@ private class RESTGenericTest{
             '"http_method__c": "PATCH",' + 
             '"path__c": "/patchWithBody/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "WithBody"' + 
             '},' + 
             '{' + 
@@ -659,6 +679,7 @@ private class RESTGenericTest{
             '"http_method__c": "DELETE",' + 
             '"path__c": "/deleteWithBody/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "WithBody"' + 
             '},' + 
             '{' + 
@@ -675,6 +696,7 @@ private class RESTGenericTest{
             '"http_method__c": "GET",' + 
             '"path__c": "/JSONexception/",' + 
             '"class__c": "TestService",' + 
+            '"access_control_field__c": "test__c",' + 
             '"method__c": "JSON Exception method"' + 
             '}' + 
             ']', List<Generic_REST_Route__mdt>.class);
