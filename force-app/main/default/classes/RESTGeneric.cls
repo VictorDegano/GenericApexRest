@@ -43,8 +43,13 @@ global with sharing class RESTGeneric{
                 return;
             }
 
-            executeSpecificREST((Generic_REST_Route__mdt) route.get());
+            Generic_REST_Route__mdt restRoute = (Generic_REST_Route__mdt) route.get();
 
+            controlAccess(restRoute);
+
+            executeSpecificREST(restRoute);
+        } catch (SecurityException  noAccessException) {
+            setUnauthorizedRequest(GenericRestStatusCode.UNAUTHORIZED);
         } catch (JSONException  aJsonProcessException) {
             setBadRequest(GenericRestStatusCode.BAD_JSON_FORMAT_REQUEST);
         } catch (Exception processException){
@@ -52,7 +57,14 @@ global with sharing class RESTGeneric{
         }
     }
 
-    private static void executeSpecificREST(Generic_REST_Route__mdt route){
+    private static void controlAccess(Generic_REST_Route__mdt route) {
+        Boolean authorized = (Boolean) REST_Access__c.getInstance().get(route.Access_Control_Field__c);
+        if(! authorized){
+            throw new SecurityException();
+        }
+    }
+
+    private static void executeSpecificREST(Generic_REST_Route__mdt route) {
         Type classType = Type.forName(route.Class__c);
 
         InterfaceRESTGeneric specificClass = (InterfaceRESTGeneric)classType.newInstance();
@@ -121,6 +133,10 @@ global with sharing class RESTGeneric{
             }
         }
         return config;
+    }
+
+    private static void setUnauthorizedRequest(GenericRestStatusCode.RESTInternalCode restStatusCode){
+        setResponse(401, restStatusCode);
     }
 
     private static void setBadRequest(GenericRestStatusCode.RESTInternalCode restStatusCode){
