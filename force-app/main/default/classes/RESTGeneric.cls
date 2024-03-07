@@ -58,7 +58,7 @@ global with sharing class RESTGeneric{
     }
 
     private static void controlAccess(Generic_REST_Route__mdt route) {
-        Boolean authorized = (Boolean) REST_Access__c.getInstance().get(route.Access_Control_Field__c);
+        Boolean authorized = (Boolean) REST_Access__c.getInstance()?.get(route.Access_Control_Field__c) ?? false;
         if(! authorized){
             throw new SecurityException();
         }

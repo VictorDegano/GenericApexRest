@@ -12,7 +12,7 @@ public with sharing class JSONResponse {
         this.hasError = false;
         this.internalCode = GenericRestStatusCode.SUCCESSFUL.CODE;
         this.message = GenericRestStatusCode.SUCCESSFUL.DESCRIPTION;
-        this.data = new List<Object>{1,2};
+        this.data = new List<Object>{};
     }
 
     public String serialize(){
