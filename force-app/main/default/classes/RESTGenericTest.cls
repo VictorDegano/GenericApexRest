@@ -3,8 +3,89 @@ private class RESTGenericTest{
 
     @TestSetup
     static void makeData(){
-        REST_Access__c orgAccess = new REST_Access__c( Test__c = true );
+        REST_Access__c orgAccess = new REST_Access__c(SetupOwnerId=UserInfo.getOrganizationId(), Test__c = true );
         insert orgAccess;
+    }
+
+    @IsTest
+    private static void canDenyAccessOfAProfileOverTheDefaultOrgSettings(){
+        //Setup(Given)
+        insert new REST_Access__c( Test__c = false, SetupOwnerId = UserInfo.getProfileId() );
+        
+        RESTGeneric.route_Configs = getMetadata();
+
+        RestRequest request = new RestRequest();
+        RestResponse response = new RestResponse();
+
+        request.requestURI = '/withPathparameters/paramAtEnd';
+        request.httpMethod = 'GET';
+
+        RestContext.request = request;
+        RestContext.response = response;
+
+        //Exercise(When)
+        Test.startTest();
+        RESTGeneric.doGet();
+        Test.stopTest();
+
+        //Test(Then)
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual(GenericRestStatusCode.UNAUTHORIZED.DESCRIPTION, jsonResponse.message, 'It\'s not the expected status for a unauthorized exception');
+        Assert.areEqual(401, response.statusCode, 'It\'s not the expected status code for a unauthorized exception');
+    }
+
+    @IsTest
+    private static void canDenyAccessOfAUserOverTheDefaultOrgSettings(){
+        //Setup(Given)
+        insert new REST_Access__c( Test__c = false, SetupOwnerId = UserInfo.getUserId() );
+        
+        RESTGeneric.route_Configs = getMetadata();
+
+        RestRequest request = new RestRequest();
+        RestResponse response = new RestResponse();
+
+        request.requestURI = '/withPathparameters/paramAtEnd';
+        request.httpMethod = 'GET';
+
+        RestContext.request = request;
+        RestContext.response = response;
+
+        //Exercise(When)
+        Test.startTest();
+        RESTGeneric.doGet();
+        Test.stopTest();
+
+        //Test(Then)
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual(GenericRestStatusCode.UNAUTHORIZED.DESCRIPTION, jsonResponse.message, 'It\'s not the expected status for a unauthorized exception');
+        Assert.areEqual(401, response.statusCode, 'It\'s not the expected status code for a unauthorized exception');
+    }
+
+    @IsTest
+    private static void IfUserDontHasAccessToRestGetAnUnauthorizedException(){
+        //Setup(Given)
+        delete REST_Access__c.getOrgDefaults();
+        
+        RESTGeneric.route_Configs = getMetadata();
+
+        RestRequest request = new RestRequest();
+        RestResponse response = new RestResponse();
+
+        request.requestURI = '/withPathparameters/paramAtEnd';
+        request.httpMethod = 'GET';
+
+        RestContext.request = request;
+        RestContext.response = response;
+
+        //Exercise(When)
+        Test.startTest();
+        RESTGeneric.doGet();
+        Test.stopTest();
+
+        //Test(Then)
+        JSONResponse jsonResponse = getRESTresponse();
+        Assert.areEqual(GenericRestStatusCode.UNAUTHORIZED.DESCRIPTION, jsonResponse.message, 'It\'s not the expected status for a unauthorized exception');
+        Assert.areEqual(401, response.statusCode, 'It\'s not the expected status code for a unauthorized exception');
     }
 
     @IsTest
@@ -32,8 +113,8 @@ private class RESTGenericTest{
 
         //Test(Then)
         JSONResponse jsonResponse = getRESTresponse();
-        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, jsonResponse.data, 'It\'s not the expected data Response of the PATCH resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the PATCH resource');
+        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, String.valueOf(jsonResponse.data), 'It\'s not the expected data Response of the PATCH resource');
     }
 
     @IsTest
@@ -61,7 +142,7 @@ private class RESTGenericTest{
 
         //Test(Then)
         JSONResponse jsonResponse = getRESTresponse();
-        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, jsonResponse.data, 'It\'s not the expected data Response of the DELETE resource');
+        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, (String) jsonResponse.data, 'It\'s not the expected data Response of the DELETE resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the DELETE resource');
     }
 
@@ -91,7 +172,7 @@ private class RESTGenericTest{
 
         //Test(Then)
         JSONResponse jsonResponse = getRESTresponse();
-        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, jsonResponse.data, 'It\'s not the expected data Response of the PUT resource');
+        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, (String) jsonResponse.data, 'It\'s not the expected data Response of the PUT resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the PUT resource');
     }
 
@@ -120,7 +201,7 @@ private class RESTGenericTest{
 
         //Test(Then)
         JSONResponse jsonResponse = getRESTresponse();
-        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, jsonResponse.data, 'It\'s not the expected data Response of the POST resource');
+        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, (String) jsonResponse.data, 'It\'s not the expected data Response of the POST resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the POST resource');
     }
 
@@ -148,7 +229,7 @@ private class RESTGenericTest{
 
         //Test(Then)
         JSONResponse jsonResponse = getRESTresponse();
-        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, jsonResponse.data, 'It\'s not the expected data Response of the GET resource');
+        Assert.areEqual(request.httpMethod + ' ' + getRequest.data, (String) jsonResponse.data, 'It\'s not the expected data Response of the GET resource');
         Assert.areEqual(200, response.statusCode, 'It\'s not the expected response of the Get resource');
     }
 
